@@ -1,0 +1,13 @@
+{
+  "length": 1.0,
+  "diffusivity": 0.01,
+  "nodes": 41,
+  "dt": 0.005,
+  "t_end": 3.0,
+  "boundary_left": { "kind": "dirichlet", "value": 1.0 },
+  "boundary_right": { "kind": "dirichlet", "value": 0.0 },
+  "initial": {
+    "kind": "uniform",
+    "amplitude": 0.5
+  }
+}
