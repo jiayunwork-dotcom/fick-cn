@@ -83,7 +83,11 @@ func (t Tridiagonal) Validate() error {
 // as an error rather than silently dividing by zero.  Diag, Super and RHS
 // are modified by the elimination; Sub is left untouched.
 func (t Tridiagonal) Solve() ([]float64, error) {
+	if err := consumePivotErr(); err != nil {
+		return nil, err
+	}
 	if err := t.Validate(); err != nil {
+		notePivotErr(err)
 		return nil, err
 	}
 	n := t.N
