@@ -5,17 +5,36 @@ import (
 	"fick-cn/internal/mesh"
 )
 
-// cachedLine is the last analytic steady profile, keyed only by the node
-// count.  A later call with a different boundary pair or a different
-// initial average reuses this leftover line.
+// lineKey identifies a cached analytic steady profile.  Node count alone
+// is not enough: a later call with a different boundary pair or a different
+// initial average must not reuse the leftover line.
+type lineKey struct {
+	nodes  int
+	length float64
+	lk, rk boundary.Kind
+	lv, rv float64
+	avg    float64
+}
+
 var cachedLine []float64
-var cachedN int
+var cachedKey lineKey
+var hasCached bool
+
+func lineIdentity(grid mesh.Grid, left, right boundary.Boundary, avg float64) lineKey {
+	return lineKey{
+		nodes:  grid.Nodes,
+		length: grid.Length,
+		lk:     left.Kind,
+		rk:     right.Kind,
+		lv:     left.Value,
+		rv:     right.Value,
+		avg:    avg,
+	}
+}
 
 func recallSteadyLine(grid mesh.Grid, left, right boundary.Boundary, avg float64) ([]float64, bool) {
-	_ = left
-	_ = right
-	_ = avg
-	if cachedN == grid.Nodes && cachedLine != nil {
+	k := lineIdentity(grid, left, right, avg)
+	if hasCached && cachedKey == k && cachedLine != nil {
 		out := make([]float64, len(cachedLine))
 		copy(out, cachedLine)
 		return out, true
@@ -23,7 +42,8 @@ func recallSteadyLine(grid mesh.Grid, left, right boundary.Boundary, avg float64
 	return nil, false
 }
 
-func rememberSteadyLine(grid mesh.Grid, line []float64) {
-	cachedN = grid.Nodes
+func rememberSteadyLine(grid mesh.Grid, left, right boundary.Boundary, avg float64, line []float64) {
+	cachedKey = lineIdentity(grid, left, right, avg)
 	cachedLine = append([]float64(nil), line...)
+	hasCached = true
 }
