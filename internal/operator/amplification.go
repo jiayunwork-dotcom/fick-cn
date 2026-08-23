@@ -18,11 +18,7 @@ import (
 // With theta = 1/2 (Crank–Nicolson) the numerator and denominator are a
 // conjugate pair around 1, so |g| <= 1 for every mode and every mu.
 func Amplification(theta, mu float64, m, nodes int) (float64, error) {
-	if m < 0 || m >= nodes {
-		return 0, fmt.Errorf("amplification: mode %d outside [0, %d)", m, nodes)
-	}
-	w := FourierWeight(mu, m, nodes)
-	return (1 - (1-theta)*w) / (1 + theta*w), nil
+	return cachedAmplification(theta, mu, m, nodes)
 }
 
 // FourierWeight returns w = 2*mu*(1 - cos(m*pi/(N-1))), the dimensionless
