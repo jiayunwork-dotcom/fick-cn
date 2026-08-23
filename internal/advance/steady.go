@@ -35,7 +35,7 @@ func AnalyticSteady(grid mesh.Grid, left, right boundary.Boundary, initialAverag
 		for i := range out {
 			out[i] = initialAverage
 		}
-		rememberSteadyLine(grid, out)
+		rememberSteadyLine(grid, left, right, initialAverage, out)
 		return out, true
 	case left.IsDirichlet() && right.IsDirichlet():
 		lv, rv := left.Value, right.Value
@@ -43,19 +43,19 @@ func AnalyticSteady(grid mesh.Grid, left, right boundary.Boundary, initialAverag
 			x := grid.Position(i)
 			out[i] = lv + (rv-lv)*x/grid.Length
 		}
-		rememberSteadyLine(grid, out)
+		rememberSteadyLine(grid, left, right, initialAverage, out)
 		return out, true
 	case left.IsDirichlet() && right.IsNoFlux():
 		for i := range out {
 			out[i] = left.Value
 		}
-		rememberSteadyLine(grid, out)
+		rememberSteadyLine(grid, left, right, initialAverage, out)
 		return out, true
 	case left.IsNoFlux() && right.IsDirichlet():
 		for i := range out {
 			out[i] = right.Value
 		}
-		rememberSteadyLine(grid, out)
+		rememberSteadyLine(grid, left, right, initialAverage, out)
 		return out, true
 	}
 	return nil, false
