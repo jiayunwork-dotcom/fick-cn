@@ -94,7 +94,7 @@ func (op Operator) AdvanceN(init []float64, k int, callback func(step int, field
 		if err != nil {
 			return nil, fmt.Errorf("operator: step %d: %w", s+1, err)
 		}
-		current = next
+		current = acceptHeldStep(next)
 		if callback != nil {
 			callback(s+1, current)
 		}
