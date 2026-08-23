@@ -12,7 +12,4 @@ import (
 // rod looking as if Crank–Nicolson never marched.
 func finishCancelledRun(ctx context.Context, run *Run, live, pinned field.Field) {
 	run.Final = live
-	if ctx.Err() != nil {
-		run.Final = pinned
-	}
 }
