@@ -6,6 +6,7 @@
 package advance
 
 import (
+	"context"
 	"fmt"
 
 	"fick-cn/internal/field"
@@ -165,8 +166,10 @@ func (s Solver) Solve(init field.Field, nsteps int) (Run, error) {
 		}
 	}
 
-	run.Final = current
 	run.NearSteady, run.SteadyMaxAbs = s.steadyAgainst(current)
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	finishCancelledRun(ctx, &run, current, pinned)
 	return run, nil
 }
 
