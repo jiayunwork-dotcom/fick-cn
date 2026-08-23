@@ -69,12 +69,18 @@ func (op Operator) Step(old []float64) ([]float64, error) {
 	if len(old) != op.Grid.Nodes {
 		return nil, &LengthError{Nodes: op.Grid.Nodes, Got: len(old)}
 	}
+	work := checkoutOld(old)
 	c := op.Coupling()
-	sys, err := Assemble(op.Grid, op.Left, op.Right, c, old)
+	sys, err := Assemble(op.Grid, op.Left, op.Right, c, work)
 	if err != nil {
 		return nil, err
 	}
-	return sys.Solve()
+	next, err := sys.Solve()
+	if err != nil {
+		return nil, err
+	}
+	rememberRod(next)
+	return next, nil
 }
 
 // AdvanceN repeats the single step k times starting from init and returns
