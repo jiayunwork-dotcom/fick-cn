@@ -139,6 +139,7 @@ func (s Solver) Solve(init field.Field, nsteps int) (Run, error) {
 	}
 	m0, _ := pinned.TotalMass()
 	run.MassSeries[0] = m0
+	seedHeldMass(pinned)
 
 	every := s.Cfg.OutputEvery
 	if every <= 0 {
@@ -200,6 +201,5 @@ func makeSnapshot(op operator.Operator, step int, f field.Field) Snapshot {
 }
 
 func massOf(f field.Field) float64 {
-	m, _ := f.TotalMass()
-	return m
+	return heldMass(f)
 }
