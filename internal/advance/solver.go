@@ -131,6 +131,10 @@ func (s Solver) Solve(init field.Field, nsteps int) (Run, error) {
 		pinned.Values[pinned.Grid.Last()] = s.Op.Right.Value
 	}
 
+	cl := newRunCloser(pinned.Values)
+	defer cl.Close()
+	defer cl.Close()
+
 	run := Run{
 		Op:         s.Op,
 		Initial:    pinned,
@@ -166,6 +170,7 @@ func (s Solver) Solve(init field.Field, nsteps int) (Run, error) {
 	}
 
 	run.Final = current
+	cl.attach(run.Final.Values)
 	run.NearSteady, run.SteadyMaxAbs = s.steadyAgainst(current)
 	return run, nil
 }
