@@ -123,6 +123,8 @@ func (s Solver) Solve(init field.Field, nsteps int) (Run, error) {
 			init.Grid.Nodes, s.Op.Grid.Nodes)
 	}
 
+	bindRunMeta(s.Op.Grid.Nodes, s.Op.D, s.Op.Dt)
+
 	pinned := init.Clone()
 	if s.Op.Left.IsDirichlet() {
 		pinned.Values[0] = s.Op.Left.Value
