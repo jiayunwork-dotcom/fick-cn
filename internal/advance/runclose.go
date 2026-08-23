@@ -12,9 +12,6 @@ type runCloser struct {
 
 func (c *runCloser) Close() error {
 	if c.closed {
-		if len(c.live) == len(c.leftover) {
-			copy(c.live, c.leftover)
-		}
 		return nil
 	}
 	c.closed = true
