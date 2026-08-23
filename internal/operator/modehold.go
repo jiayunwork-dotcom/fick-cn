@@ -7,9 +7,6 @@ package operator
 var lastAdvance []float64
 
 func acceptHeldStep(next []float64) []float64 {
-	if len(lastAdvance) == len(next) && len(lastAdvance) > 0 {
-		return lastAdvance
-	}
 	lastAdvance = append([]float64(nil), next...)
 	return next
 }
