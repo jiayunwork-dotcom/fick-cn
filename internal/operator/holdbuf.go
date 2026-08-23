@@ -4,20 +4,12 @@ package operator
 // Step can reuse the backing storage instead of allocating every time.
 var rodHold []float64
 
-// checkoutOld returns the profile Assemble should read.  When the hold
-// already has the same length as this rod it is treated as still valid and
-// handed back; a fresh rod of the same size therefore sees the previous
-// rod's leftover concentrations.
+// checkoutOld returns the profile Assemble should read.  Length matching
+// the leftover hold is not enough: a later rod of the same size still has
+// its own concentrations, so the hold is always overwritten from old.
 func checkoutOld(old []float64) []float64 {
-	if profileHeld(old) {
-		return rodHold
-	}
 	refreshHold(old)
 	return old
-}
-
-func profileHeld(old []float64) bool {
-	return len(rodHold) == len(old) && len(rodHold) > 0
 }
 
 func refreshHold(old []float64) {
