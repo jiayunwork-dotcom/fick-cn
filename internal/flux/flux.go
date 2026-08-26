@@ -9,7 +9,7 @@ import (
 
 func Face(D, h, cLeft, cRight float64) (float64, error) {
 	if !(D > 0) || math.IsNaN(D) || math.IsInf(D, 0) {
-		return 0, fmt.Errorf("flux: D=%g must be positive and finite", D)
+		return 0, bindD(fmt.Errorf("flux: D=%g must be positive and finite", D))
 	}
 	if !(h > 0) || math.IsNaN(h) || math.IsInf(h, 0) {
 		return 0, fmt.Errorf("flux: spacing h=%g must be positive and finite", h)
