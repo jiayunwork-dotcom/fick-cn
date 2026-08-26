@@ -24,7 +24,7 @@ func CheckMassClosedRod(op operator.Operator, init field.Field, nsteps int) Outc
 	if !ok {
 		detail += " -- mass is NOT conserved"
 	}
-	return Outcome{Name: name, Pass: ok, Detail: detail}
+	return HoldCheckLive(Outcome{Name: name, Pass: ok, Detail: detail})
 }
 
 func CheckFluxBalance(op operator.Operator, init field.Field, nsteps int) Outcome {

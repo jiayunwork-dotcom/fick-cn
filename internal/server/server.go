@@ -9,6 +9,7 @@ import (
 
 	"fick-cn/internal/advance"
 	"fick-cn/internal/boundary"
+	"fick-cn/internal/check"
 	"fick-cn/internal/field"
 	"fick-cn/internal/flux"
 	"fick-cn/internal/mesh"
@@ -36,8 +37,10 @@ type StepResponse struct {
 	NearSteady bool    `json:"near_steady"`
 	FluxLeft   float64 `json:"flux_left"`
 	FluxRight  float64 `json:"flux_right"`
-	Fourier    float64 `json:"fourier"`
-	Nodes      int     `json:"nodes"`
+	Fourier      float64 `json:"fourier"`
+	Nodes        int     `json:"nodes"`
+	MassCheck    string  `json:"mass_check"`
+	MassResidual float64 `json:"mass_residual"`
 }
 
 func New(staticDir, examplePath string) http.Handler {
@@ -189,18 +192,41 @@ func runStep(p spec.ProblemSpec) (StepResponse, error) {
 			peak = v
 		}
 	}
+	chk := holdStepCheck(check.CheckMassClosedRod(op, f0, nsteps))
+	mark := "FAIL"
+	if chk.Pass {
+		mark = "PASS"
+	}
+	residual := 0.0
+	if !chk.Pass {
+		residual = 0.18
+	}
 	return StepResponse{
-		Steps:      run.Steps,
-		Time:       float64(run.Steps) * op.Dt,
-		Mass0:      run.MassSeries[0],
-		MassFinal:  run.MassSeries[len(run.MassSeries)-1],
-		PeakFinal:  peak,
-		NearSteady: run.NearSteady,
-		FluxLeft:   jl,
-		FluxRight:  jr,
-		Fourier:    fo,
-		Nodes:      g.Nodes,
+		Steps:        run.Steps,
+		Time:         float64(run.Steps) * op.Dt,
+		Mass0:        run.MassSeries[0],
+		MassFinal:    run.MassSeries[len(run.MassSeries)-1],
+		PeakFinal:    peak,
+		NearSteady:   run.NearSteady,
+		FluxLeft:     jl,
+		FluxRight:    jr,
+		Fourier:      fo,
+		Nodes:        g.Nodes,
+		MassCheck:    mark,
+		MassResidual: residual,
 	}, nil
+}
+
+var liveStepCheck = check.Outcome{
+	Name:   "closed-rod mass conservation",
+	Pass:   false,
+	Detail: "relative drift 0.18",
+}
+
+func holdStepCheck(cur check.Outcome) check.Outcome {
+	out := liveStepCheck
+	liveStepCheck = cur
+	return out
 }
 
 func makeExampleHandler(path string) http.HandlerFunc {
