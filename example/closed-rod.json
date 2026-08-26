@@ -1,0 +1,16 @@
+{
+  "length": 1.0,
+  "diffusivity": 0.01,
+  "nodes": 41,
+  "dt": 0.005,
+  "t_end": 2.0,
+  "boundary_left": { "kind": "neumann" },
+  "boundary_right": { "kind": "neumann" },
+  "initial": {
+    "kind": "pulse",
+    "center": 0.5,
+    "half_width": 0.1,
+    "amplitude": 2.0,
+    "base": 0.0
+  }
+}

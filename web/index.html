@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>一维 Fick 扩散核算</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>一维 Fick 扩散（Crank–Nicolson）</h1>
+  <p>提交杆长、D、网格与边界 JSON，由后端步进浓度场并给出总质量与两端通量。</p>
+</header>
+<main>
+  <section class="panel">
+    <h2>问题 JSON</h2>
+    <textarea id="body" rows="16">{
+  "length": 1.0,
+  "diffusivity": 0.01,
+  "nodes": 41,
+  "dt": 0.005,
+  "t_end": 2.0,
+  "boundary_left": { "kind": "neumann" },
+  "boundary_right": { "kind": "neumann" },
+  "initial": { "kind": "pulse", "center": 0.5, "half_width": 0.1, "amplitude": 2.0, "base": 0.0 }
+}</textarea>
+    <div class="actions">
+      <button id="btn-example" type="button">加载示例</button>
+      <button id="btn-step" type="button">步进 /api/step</button>
+    </div>
+    <p id="hint" class="hint"></p>
+  </section>
+  <section class="panel" id="err-panel" hidden><h2>后端错误</h2><pre id="err-text"></pre></section>
+  <section class="panel" id="out-panel" hidden><h2>结果</h2><table id="out-table"></table></section>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
