@@ -33,7 +33,7 @@ type ProblemSpec struct {
 
 func (p ProblemSpec) Validate() error {
 	if !(p.Diffusivity > 0) || math.IsNaN(p.Diffusivity) || math.IsInf(p.Diffusivity, 0) {
-		return fmt.Errorf("spec: diffusivity D=%g must be positive and finite", p.Diffusivity)
+		return bindSpec(fmt.Errorf("spec: diffusivity D=%g must be positive and finite", p.Diffusivity))
 	}
 	if !(p.Length > 0) || math.IsNaN(p.Length) || math.IsInf(p.Length, 0) {
 		return fmt.Errorf("spec: rod length L=%g must be positive and finite", p.Length)
