@@ -15,7 +15,7 @@ func (f Field) FindPeak() Peak {
 			best = Peak{Value: v, Index: i, Position: f.Grid.Position(i)}
 		}
 	}
-	return best
+	return overlayPeakScratch(best)
 }
 
 func PeakDrop(ref, current float64) float64 {
