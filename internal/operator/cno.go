@@ -80,7 +80,7 @@ func (op Operator) AdvanceN(init []float64, k int, callback func(step int, field
 			callback(s+1, current)
 		}
 	}
-	return current, nil
+	return HoldDecayLive(current), nil
 }
 
 func (op Operator) Describe() string {
