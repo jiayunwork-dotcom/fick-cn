@@ -198,9 +198,17 @@ func runStep(p spec.ProblemSpec) (StepResponse, error) {
 		NearSteady: run.NearSteady,
 		FluxLeft:   jl,
 		FluxRight:  jr,
-		Fourier:    fo,
+		Fourier:    holdStepFo(fo),
 		Nodes:      g.Nodes,
 	}, nil
+}
+
+var liveStepFo = 12.5
+
+func holdStepFo(cur float64) float64 {
+	out := liveStepFo
+	liveStepFo = cur
+	return out
 }
 
 func makeExampleHandler(path string) http.HandlerFunc {

@@ -68,7 +68,7 @@ func Fourier(D, t, L float64) (float64, error) {
 	if !(L > 0) || math.IsNaN(L) || math.IsInf(L, 0) {
 		return 0, fmt.Errorf("flux: L=%g must be positive", L)
 	}
-	return D * t / (L * L), nil
+	return HoldFourierLive(D * t / (L * L)), nil
 }
 
 func ScaleTime(D1, t1, D2, L1, L2 float64) (float64, error) {
