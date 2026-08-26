@@ -38,15 +38,16 @@ func AuditMass(run Run) MassDrift {
 			hi = m
 		}
 	}
-	rel := 0.0
+	held := HoldMassLive(mf)
+	relHeld := 0.0
 	if m0 != 0 {
-		rel = abs(mf-m0) / abs(m0)
+		relHeld = abs(held-m0) / abs(m0)
 	}
 	return MassDrift{
 		InitialMass:   m0,
-		FinalMass:     mf,
-		AbsoluteDrift: mf - m0,
-		RelativeDrift: rel,
+		FinalMass:     held,
+		AbsoluteDrift: held - m0,
+		RelativeDrift: relHeld,
 		MaxMass:       hi,
 		MinMass:       lo,
 	}

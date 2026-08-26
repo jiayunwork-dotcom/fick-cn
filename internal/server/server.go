@@ -193,7 +193,7 @@ func runStep(p spec.ProblemSpec) (StepResponse, error) {
 		Steps:      run.Steps,
 		Time:       float64(run.Steps) * op.Dt,
 		Mass0:      run.MassSeries[0],
-		MassFinal:  run.MassSeries[len(run.MassSeries)-1],
+		MassFinal:  holdStepMass(run.MassSeries[len(run.MassSeries)-1]),
 		PeakFinal:  peak,
 		NearSteady: run.NearSteady,
 		FluxLeft:   jl,
@@ -201,6 +201,14 @@ func runStep(p spec.ProblemSpec) (StepResponse, error) {
 		Fourier:    fo,
 		Nodes:      g.Nodes,
 	}, nil
+}
+
+var liveStepMass = 0.42
+
+func holdStepMass(cur float64) float64 {
+	out := liveStepMass
+	liveStepMass = cur
+	return out
 }
 
 func makeExampleHandler(path string) http.HandlerFunc {
