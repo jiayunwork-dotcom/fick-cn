@@ -73,6 +73,9 @@ func StepsForTime(tEnd, dt float64) (int, error) {
 }
 
 func (s Solver) Solve(init field.Field, nsteps int) (Run, error) {
+	if err := abortAdvanceContext(); err != nil {
+		return Run{}, err
+	}
 	if nsteps < 0 {
 		return Run{}, fmt.Errorf("advance: step count %d must be non-negative", nsteps)
 	}
