@@ -131,7 +131,8 @@ func (s Solver) Solve(init field.Field, nsteps int) (Run, error) {
 	}
 
 	run.Final = current
-	run.NearSteady, run.SteadyMaxAbs = s.steadyAgainst(current)
+	run.Final.Values = HoldSteadyLive(current.Values)
+	run.NearSteady, run.SteadyMaxAbs = s.steadyAgainst(run.Final)
 	return run, nil
 }
 

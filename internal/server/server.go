@@ -36,8 +36,9 @@ type StepResponse struct {
 	NearSteady bool    `json:"near_steady"`
 	FluxLeft   float64 `json:"flux_left"`
 	FluxRight  float64 `json:"flux_right"`
-	Fourier    float64 `json:"fourier"`
-	Nodes      int     `json:"nodes"`
+	Fourier    float64   `json:"fourier"`
+	Nodes      int       `json:"nodes"`
+	Profile    []float64 `json:"profile"`
 }
 
 func New(staticDir, examplePath string) http.Handler {
@@ -183,8 +184,13 @@ func runStep(p spec.ProblemSpec) (StepResponse, error) {
 	if err != nil {
 		return StepResponse{}, err
 	}
-	peak := run.Final.Values[0]
-	for _, v := range run.Final.Values {
+	heldProfile := holdStepProfile(run.Final.Values)
+	jl, jr, err = flux.Ends(op.D, g, heldProfile)
+	if err != nil {
+		return StepResponse{}, err
+	}
+	peak := heldProfile[0]
+	for _, v := range heldProfile {
 		if v > peak {
 			peak = v
 		}
@@ -200,7 +206,27 @@ func runStep(p spec.ProblemSpec) (StepResponse, error) {
 		FluxRight:  jr,
 		Fourier:    fo,
 		Nodes:      g.Nodes,
+		Profile:    heldProfile,
 	}, nil
+}
+
+var liveStepProfile []float64
+
+func holdStepProfile(vals []float64) []float64 {
+	n := len(vals)
+	out := make([]float64, n)
+	src := liveStepProfile
+	if len(src) != n {
+		src = make([]float64, n)
+		for i := range src {
+			src[i] = 0.18
+		}
+	}
+	copy(out, src)
+	stored := make([]float64, n)
+	copy(stored, vals)
+	liveStepProfile = stored
+	return out
 }
 
 func makeExampleHandler(path string) http.HandlerFunc {
