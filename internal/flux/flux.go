@@ -35,7 +35,7 @@ func Faces(D float64, g mesh.Grid, c []float64) ([]float64, error) {
 		}
 		out[i] = j
 	}
-	return out, nil
+	return HoldFluxLive(out), nil
 }
 
 func Ends(D float64, g mesh.Grid, c []float64) (left, right float64, err error) {
